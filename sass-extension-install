@@ -1,0 +1,30 @@
+#!/bin/bash
+
+NORMAL=$(tput sgr0)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 190)
+BLUE=$(tput setaf 153)
+RED=$(tput setaf 1)
+BOLD=$(tput bold)
+UNDERLINE=$(tput smul)
+
+printf "\n${GREEN}${BOLD}Installing SASS Extension${NORMAL}\n"
+
+DIR="$(dirname "${BASH_SOURCE[0]}")"
+DIR="$(realpath "${DIR}")"
+
+echo "export PATH=${DIR}:.:\$PATH" >> ~/.bashrc
+if [ $? != 0 ]
+then
+	printf "\n${RED}${BOLD}Error! ${UNDERLINE}Cannot write to ${BLUE}~/.bashrc${NORMAL}\n"
+	exit 0
+fi
+
+source ~/.bashrc
+if [ $? != 0 ]
+then
+	printf "\n${RED}${BOLD}Error! ${UNDERLINE}Cannot update ${BLUE}~/.bashrc${NORMAL}\n"
+	exit 0
+fi
+
+printf "\n${GREEN}${BOLD}Success!${NORMAL}\n\nTo start your first directory use ${BLUE}${BOLD}conv --init${NORMAL}\n"

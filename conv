@@ -1,0 +1,178 @@
+#!/bin/bash
+
+GET_FILES() {
+	if [[ -f $ROOT_LOC ]]
+	then
+		ROOT=`cat ${ROOT_LOC}`
+	else
+		printf "\nUse ${BLUE}${BOLD}--root -r${NORMAL} to save the root file location\n"
+		exit 0
+	fi
+	if [[ -f $OUT_LOC ]]
+	then
+		OUTPUT=`cat ${OUT_LOC}`
+	else
+		printf "\nUse ${BLUE}${BOLD}--output -o${NORMAL} to save the output file location\n"
+		exit 0
+	fi
+	if [[ -f $FILE ]]
+	then
+		NAME=`cat ${FILE}`
+	else
+		printf "\nUse ${BLUE}${BOLD}--file -f${NORMAL} to save the file name\n"
+		exit 0
+	fi
+}
+
+FORMAT_DIRECTORY() {
+	if [[ ${1: -1} != "/" ]]
+	then
+		echo "${1}/"
+	else
+		echo $1
+	fi
+}
+
+NORMAL=$(tput sgr0)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 190)
+BLUE=$(tput setaf 153)
+RED=$(tput setaf 1)
+BOLD=$(tput bold)
+UNDERLINE=$(tput smul)
+
+ROOT_LOC="./.conv/root_loc"
+OUT_LOC="./.conv/out_loc"
+FILE="./.conv/file"
+
+case $1 in
+	--init|-i)
+		if [[ -d "./.conv/" ]]
+		then
+			printf "\nConversion file already initialised\n"
+		else
+			mkdir ./.conv/
+			printf "\n${GREEN}${BOLD}Directory sucessfully initialised${NORMAL}\n"
+			printf "\nSave the location of the root file by typing ${BLUE}${BOLD}conv --root {location of root file}${NORMAL}\n"
+			printf "\nSave the location of the output file by typing ${BLUE}${BOLD}conv --output {location of output file}${NORMAL}"
+			printf "\nSave the name of the root file by typing ${BLUE}${BOLD}conv --file {name of root file}${NORMAL}\n"
+			printf "\n${RED}${BOLD}Important:${NORMAL} ${UNDERLINE}All files should be saved respective of where you initialised the file.${NORMAL}\n\n${YELLOW}${BOLD}EG:${NORMAL} If I initialised a directory at ${BLUE}${BOLD}~/Documents/conv/${NORMAL} I would save the locations and names of files at ${BLUE}${BOLD}./assets/css/scss/root.scss${NORMAL} rather than ${RED}${BOLD}~/Documents/conv/assets/css/scss/root.scss${NORMAL}\n"
+		fi
+		;;
+	--root|-r)
+		DIR=`FORMAT_DIRECTORY $2`
+		if [[ -f ${ROOT_LOC} ]]
+		then
+			OLD=`cat ${ROOT_LOC}`
+			printf "\nOld root location: ${BLUE}${BOLD}${OLD}${NORMAL}\n\nNew root location: ${BLUE}${BOLD}${DIR}${NORMAL}\n"
+			printf "\nYou are about to overwrite an old root location.\n\nAre you sure? [y,n] "
+			read LOC_REWRITE
+			if [ $LOC_REWRITE == "yes" ] | [ $LOC_REWRITE == "y" ] 
+			then
+				echo $DIR > $ROOT_LOC
+				printf "\nNew location saved\n"
+			else
+				printf "\nAborting\n"
+			fi
+		else
+			echo $DIR > $ROOT_LOC
+			printf "\nLocation saved\n"
+		fi
+		;;
+	--output|-o)
+		DIR=`FORMAT_DIRECTORY $2`
+		echo $DIR
+		if [[ -f ${OUT_LOC} ]]
+		then
+			OLD=`cat ${OUT_LOC}`
+			printf "\nOld output location: ${BLUE}${BOLD}${OLD}${NORMAL}\n\nNew output location: ${BLUE}${BOLD}${DIR}${NORMAL}\n"
+			printf "\nYou are about to overwrite an old output location.\n\nAre you sure? [y,n] "
+			read OUT_REWRITE
+			if [ $OUT_REWRITE == "yes" ] | [ $OUT_REWRITE == "y" ]
+			then
+				echo $DIR > $OUT_LOC
+				printf "\nNew location saved\n"
+			else
+				printf "\nAborting\n"
+			fi
+		else
+			echo $DIR > $OUT_LOC
+			printf "\nLocation saved\n"
+		fi
+		;;
+	--file|-f)
+		if [[ $2 == *"."* ]]
+		then
+			printf "\nFull stop found in file name.  ${GREEN}${BOLD}Don't include the file extension in the file name${NORMAL}\n"
+			exit 0
+		elif [[ -f ${FILE} ]]
+		then
+			printf "\nYou are about to overwrite an old file name.\n\nAre you sure? [y,n]"
+			read FILE_REWRITE
+			if [[ $FILE_REWRITE == "yes" ]] | [[ $FILE_REWRITE == "y" ]]
+			then
+				echo $2 > $FILE
+				printf "\nNew File Saved\n"
+			else
+				printf "\nAborting\n"
+			fi
+		else
+			echo $2 > $FILE
+			printf "\nFile Name saved\n"
+		fi
+		;;
+	--help|-h)
+		printf "\n${YELLOW}${BOLD}Converting the file${NORMAL}\n"
+		printf "\n${GREEN}${BOLD}Type the root command to convert the file and all it's linked files${NORMAL}\n"
+		printf "\n${BLUE}${BOLD}--watch -w${NORMAL}\nTo watch the file for changes.  ${GREEN}${BOLD}This only applies to the root file and not any linked files${NORMAL}\n"
+		printf "\n${YELLOW}${BOLD}Storing details${NORMAL}\n"
+		printf "\n${BLUE}${BOLD}--root -r${NORMAL}\nTo save root file location. ${GREEN}${BOLD}Don't include the file name or extension${NORMAL}\n"
+		printf "\n${BLUE}${BOLD}--output -o${NORMAL}\nTo save the output file location. ${GREEN}${BOLD}Don't include the file name or extension${NORMAL}\n"
+		printf "\n${BLUE}${BOLD}--file -f${NORMAL}\nTo save the name of the file. ${GREEN}${BOLD}Don't include the file extension${NORMAL}\n"
+		printf "\n${YELLOW}${BOLD}Additional commands${NORMAL}\n"
+		printf "\n${BLUE}${BOLD}--list -l${NORMAL}\nTo view the details saved.\n"
+		printf "\n${BLUE}${BOLD}--help -h${NORMAL}\nTo see the full list of commands\n"
+		;;
+	--list|-l)
+		if [[ -d "./.conv/" ]]
+		then
+			GET_FILES
+			printf "\n - Root file Location: ${ROOT}${NAME}.scss\n"
+			printf "\n - Output file Location: ${OUTPUT}${NAME}.css\n"
+		else
+			printf "\nThis directory hasn't been initialised\n"
+		fi
+		;;
+	--temp|-t)
+		if [[ -d "./.conv/" ]]
+		then
+			GET_FILES
+			printf "\nSaving ${BLUE}${BOLD}${ROOT}${2}.scss${NORMAL} to ${BLUE}${BOLD}${OUTPUT}${2}.css${NORMAL}\n"
+			sass ${ROOT}${2}.scss ${OUTPUT}${2}.css --style compressed
+			printf "\n${GREEN}${BOLD}Done${NORMAL}\n"
+		else
+			printf "\nThis directory hasn't been initialised\n"
+		fi
+		;;
+	--watch|-w)
+		if [[ -d "./.conv/" ]]
+		then
+			GET_FILES
+			printf "\nSaving ${BLUE}${BOLD}${ROOT}${NAME}.scss${NORMAL} to ${BLUE}${BOLD}${OUTPUT}${NAME}.css${NORMAL}\n"
+			sass --watch ${ROOT}${NAME}.scss ${OUTPUT}${NAME}.css --style compressed
+		else
+			printf "\nThis directory hasn't been initialised\n"
+		fi
+		;;
+	*)
+		if [[ -d "./.conv/" ]]
+		then
+			GET_FILES
+			printf "\nSaving ${BLUE}${BOLD}${ROOT}${NAME}.scss${NORMAL} to ${BLUE}${BOLD}${OUTPUT}${NAME}.css${NORMAL}\n"
+			sass ${ROOT}${NAME}.scss ${OUTPUT}${NAME}.css --style compressed
+			printf "\n${GREEN}${BOLD}Done${NORMAL}\n"
+		else
+			printf "\nThis directory hasn't been initialised\n"
+		fi
+		;;
+esac
