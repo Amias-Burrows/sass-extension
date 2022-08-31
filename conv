@@ -132,6 +132,7 @@ case $1 in
 		printf "\n${YELLOW}${BOLD}Additional commands${NORMAL}\n"
 		printf "\n${BLUE}${BOLD}--list -l${NORMAL}\nTo view the details saved.\n"
 		printf "\n${BLUE}${BOLD}--help -h${NORMAL}\nTo see the full list of commands\n"
+		printf "\n${BLUE}${HELP}--temp -t${NORMAL}\nTo use a temporarily different file name\n"
 		;;
 	--list|-l)
 		if [[ -d "./.conv/" ]]
