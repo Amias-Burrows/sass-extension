@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This function gets the contents of the files
+# and outputs them in variables
+
 GET_FILES() {
 	if [[ -f $ROOT_LOC ]]
 	then
@@ -24,6 +27,10 @@ GET_FILES() {
 	fi
 }
 
+# This function ensures the directory location
+# always has a / in front as my code requires
+# Keeps people from breaking the code
+
 FORMAT_DIRECTORY() {
 	if [[ ${1: -1} != "/" ]]
 	then
@@ -33,6 +40,8 @@ FORMAT_DIRECTORY() {
 	fi
 }
 
+# Formatting variables for more readable code
+
 NORMAL=$(tput sgr0)
 GREEN=$(tput setaf 2)
 YELLOW=$(tput setaf 190)
@@ -41,12 +50,16 @@ RED=$(tput setaf 1)
 BOLD=$(tput bold)
 UNDERLINE=$(tput smul)
 
+# Program file locations for an initialised directory
+
 ROOT_LOC="./.conv/root_loc"
 OUT_LOC="./.conv/out_loc"
 FILE="./.conv/file"
 
 case $1 in
 	--init|-i)
+			# Initialises new directory so the command can be used
+
 		if [[ -d "./.conv/" ]]
 		then
 			printf "\nConversion file already initialised\n"
@@ -60,6 +73,9 @@ case $1 in
 		fi
 		;;
 	--root|-r)
+
+			# Stores the location of the root scss file
+
 		DIR=`FORMAT_DIRECTORY $2`
 		if [[ -f ${ROOT_LOC} ]]
 		then
@@ -80,6 +96,9 @@ case $1 in
 		fi
 		;;
 	--output|-o)
+			
+			# Stores the location of the output css file
+
 		DIR=`FORMAT_DIRECTORY $2`
 		echo $DIR
 		if [[ -f ${OUT_LOC} ]]
@@ -101,6 +120,9 @@ case $1 in
 		fi
 		;;
 	--file|-f)
+
+			# Stores the name of the file without the file extension
+
 		if [[ $2 == *"."* ]]
 		then
 			printf "\nFull stop found in file name.  ${GREEN}${BOLD}Don't include the file extension in the file name${NORMAL}\n"
@@ -135,6 +157,9 @@ case $1 in
 		printf "\n${BLUE}${HELP}--temp -t${NORMAL}\nTo use a temporarily different file name\n"
 		;;
 	--list|-l)
+
+			# Lists the stored data in a readable format
+
 		if [[ -d "./.conv/" ]]
 		then
 			GET_FILES
@@ -145,6 +170,9 @@ case $1 in
 		fi
 		;;
 	--temp|-t)
+
+			# Useful if you need to convert a differently named file but not enough times to warrent changing the stored data
+			
 		if [[ -d "./.conv/" ]]
 		then
 			GET_FILES
@@ -156,6 +184,8 @@ case $1 in
 		fi
 		;;
 	--watch|-w)
+			
+			# Useful for continuously watching the file for any changes.  Only useful if you're working on the root file and not any linked files
 		if [[ -d "./.conv/" ]]
 		then
 			GET_FILES
@@ -166,6 +196,8 @@ case $1 in
 		fi
 		;;
 	*)
+
+			# This case runs the primary function of the command.  To convert the scss file into css using sass
 		if [[ -d "./.conv/" ]]
 		then
 			GET_FILES

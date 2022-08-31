@@ -4,16 +4,25 @@ This command allows you to save locations and file names of your SCSS files and 
 
     conv
 
+**Important!* This repository doesn't contain sass or a link to it yet so you'll have to go and download it from their repository*
+
+[SASS](https://github.com/sass/sass)
+
 ## How to install
 
+**This folder isn't quite ready for downloading yet but if you want to try it out the commands are below**
 Download the repository into your computer.
-Enter these two commands:
+Enter these three commands:
 
     cd ./sass-extension
 
     sass-extension-install
 
+    source ~/.bashrc
+
 And then happy coding
+
+The source command is only required if you don't intend on restarting your computer.  This command allows you to use the program straight away from wherever in your file structure you are.
 
 ## How to use
 
